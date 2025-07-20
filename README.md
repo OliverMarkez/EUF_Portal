@@ -10,7 +10,7 @@
 - Digitizing the current process of collecting and tallying fees through the development of a mobile application.
   
 > ### <h2>🗂️PROJECT APPLICATION OVERVIEW</h2>
-- EUF Portal is a cross-platform Flutter application designed for the efficient management of tourist transactions, staff administration, and analytics/reporting for the EUF (Ecological User Fee) system. The app supports both desktop and mobile layouts, providing a responsive and user-friendly experience for authorized personnel.
+- EUF Portal is a cross-platform Flutter application designed for the efficient management of tourist transactions, staff administration, and analytics/reporting for the EUF (Environmental User's Fee) system. The app supports both desktop and mobile layouts, providing a responsive and user-friendly experience for authorized personnel.
 
 > ### <h2>🛠️DEVELOPMENT MODEL</h2>
 - Plan - The team defined the project's main goal: to create a mobile app that fixes problems with manual environmental fee collection in Puerto Galera.
@@ -82,9 +82,12 @@
 | UAT-07       | Responsive Layout and Theming               | ✅ Passed           |
 
 > ### <h2>👥TEAM MEMBERS</h2>
-- BARTOLOME, Charlotte D. - System Designer, Document Writer
-- MAÑOREZ, Shella May M. - Front-End Developer, Document Writer
-- MARQUEZ, Oliver L. - Lead Programmer, Project Manager
+| Name                      | Role(s)                                     |
+|---------------------------|---------------------------------------------|
+| BARTOLOME, Charlotte D.   | System Designer, Document Writer            |
+| MAÑOREZ, Shella May M.    | Front-End Developer, Document Writer        |
+| MARQUEZ, Oliver L.        | Lead Programmer, Project Manager            |
+
 
 
 
