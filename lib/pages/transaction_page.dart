@@ -111,6 +111,10 @@ class _TransactionPageState extends State<TransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Always update _staffEncoder from AuthProvider before building receipt
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final currentUser = authProvider.currentUser;
+    _staffEncoder = currentUser?['username'] ?? 'Unknown';
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -426,19 +430,28 @@ class _TransactionPageState extends State<TransactionPage> {
                                     _isProcessing = true;
                                   });
 
+                                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                                  final currentUser = authProvider.currentUser;
+                                  final staffUsername = currentUser?['username'];
+                                  if (currentUser == null || staffUsername == null || staffUsername.isEmpty) {
+                                    setState(() { _isProcessing = false; });
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Authentication Error'),
+                                        content: const Text('You must be logged in as a staff member to process transactions.'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop(),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  _staffEncoder = staffUsername;
                                   try {
-                                    final authProvider =
-                                        Provider.of<AuthProvider>(
-                                          context,
-                                          listen: false,
-                                        );
-
-                                    // Get current user info for receipt
-                                    final currentUser =
-                                        authProvider.currentUser;
-                                    _staffEncoder =
-                                        currentUser?['username'] ?? 'Unknown';
-
                                     // Process each category as separate transactions
                                     if (regularCount > 0) {
                                       final result =
@@ -511,23 +524,20 @@ class _TransactionPageState extends State<TransactionPage> {
                                     setState(() {
                                       _isProcessing = false;
                                     });
-                                    // Show error dialog
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
                                         title: const Text('Error'),
-                                        content: Text(
-                                          'Failed to process transaction: $e',
-                                        ),
+                                        content: Text('Failed to process transaction: $e'),
                                         actions: [
                                           TextButton(
-                                            onPressed: () =>
-                                                Navigator.of(context).pop(),
+                                            onPressed: () => Navigator.of(context).pop(),
                                             child: const Text('OK'),
                                           ),
                                         ],
                                       ),
                                     );
+                                    return;
                                   }
                                   showDialog(
                                     context: context,
@@ -831,6 +841,10 @@ class _TransactionPageState extends State<TransactionPage> {
   }
 
   Widget _buildReceiptContent({bool processed = false}) {
+    // Always update _staffEncoder from AuthProvider before building receipt
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final currentUser = authProvider.currentUser;
+    _staffEncoder = currentUser?['username'] ?? 'Unknown';
     final now = DateTime.now();
     final formattedDate = DateFormat('dd/MM/yyyy - hh:mm:ss a').format(now);
     final receiptNumber = _actualReceiptId != null
