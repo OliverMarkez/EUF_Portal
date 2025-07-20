@@ -27,7 +27,7 @@ class EUFApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'Lato',
           primarySwatch: Colors.blueGrey,
-          brightness: Brightness.dark, // Dark theme as per screenshots
+          brightness: Brightness.dark,
           scaffoldBackgroundColor: const Color(0xFF1A1C2C), // Dark background
           cardColor: const Color(0xFF2C2F40), // Darker card background
           textTheme: const TextTheme(
