@@ -47,7 +47,7 @@
 | Contact/Inquiry         |              |              | ✅             |
 
 > ### <h2>🖥️USER ACCEPTANCE TESTING</h2>
--It outlines the User Acceptance Testing (UAT) conducted to verify that the “EUF PORTAL: An Application for Managing Environmental Users' Fee in Puerto Galera”  meets the functional requirements and expectations of its intended users. UAT ensures the application is ready for real-world usage by validating each key feature based on test scenarios.
+- It outlines the User Acceptance Testing (UAT) conducted to verify that the “EUF PORTAL: An Application for Managing Environmental Users' Fee in Puerto Galera”  meets the functional requirements and expectations of its intended users. UAT ensures the application is ready for real-world usage by validating each key feature based on test scenarios.
 
 > ### <h2>🔧KEY TESTING CONSIDERATIONS</h2>
 | **Testing Area**           | **What Was Tested**                                            |
