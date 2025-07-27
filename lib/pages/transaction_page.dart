@@ -308,13 +308,133 @@ class _TransactionPageState extends State<TransactionPage> {
                                   setState(() {
                                     _isProcessing = true;
                                   });
-                                  await Future.delayed(
-                                    const Duration(seconds: 1),
-                                  );
-                                  setState(() {
-                                    _isProcessing = false;
-                                    _receiptNumber++;
-                                  });
+
+                                  final authProvider =
+                                      Provider.of<AuthProvider>(
+                                        context,
+                                        listen: false,
+                                      );
+                                  final currentUser = authProvider.currentUser;
+                                  final staffUsername =
+                                      currentUser?['username'];
+                                  if (currentUser == null ||
+                                      staffUsername == null ||
+                                      staffUsername.isEmpty) {
+                                    setState(() {
+                                      _isProcessing = false;
+                                    });
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text(
+                                          'Authentication Error',
+                                        ),
+                                        content: const Text(
+                                          'You must be logged in as a staff member to process transactions.',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  _staffEncoder = staffUsername;
+                                  try {
+                                    // Process each category as separate transactions
+                                    if (regularCount > 0) {
+                                      final result =
+                                          await TransactionService.createTransaction(
+                                            touristCategory: 'Regular',
+                                            count: regularCount,
+                                            amount: regularCount * regularPrice,
+                                            cash: _cash,
+                                            changeAmount: change,
+                                            authProvider: authProvider,
+                                          );
+                                      // Store the receipt_id from the first transaction
+                                      if (_actualReceiptId == null) {
+                                        _actualReceiptId =
+                                            result?['receipt_id'];
+                                      }
+                                    }
+
+                                    if (seniorCitizenCount > 0) {
+                                      await TransactionService.createTransaction(
+                                        touristCategory: 'Senior Citizen',
+                                        count: seniorCitizenCount,
+                                        amount:
+                                            seniorCitizenCount *
+                                            seniorCitizenPrice,
+                                        cash: _cash,
+                                        changeAmount: change,
+                                        authProvider: authProvider,
+                                      );
+                                    }
+
+                                    if (pwdsCount > 0) {
+                                      await TransactionService.createTransaction(
+                                        touristCategory: 'PWDs',
+                                        count: pwdsCount,
+                                        amount: pwdsCount * pwdsPrice,
+                                        cash: _cash,
+                                        changeAmount: change,
+                                        authProvider: authProvider,
+                                      );
+                                    }
+
+                                    if (childrenCount > 0) {
+                                      await TransactionService.createTransaction(
+                                        touristCategory: 'Children',
+                                        count: childrenCount,
+                                        amount: childrenCount * childrenPrice,
+                                        cash: _cash,
+                                        changeAmount: change,
+                                        authProvider: authProvider,
+                                      );
+                                    }
+
+                                    if (residentCount > 0) {
+                                      await TransactionService.createTransaction(
+                                        touristCategory: 'Resident',
+                                        count: residentCount,
+                                        amount: residentCount * residentPrice,
+                                        cash: _cash,
+                                        changeAmount: change,
+                                        authProvider: authProvider,
+                                      );
+                                    }
+
+                                    setState(() {
+                                      _isProcessing = false;
+                                    });
+                                  } catch (e) {
+                                    print('Error processing transaction: $e');
+                                    setState(() {
+                                      _isProcessing = false;
+                                    });
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Error'),
+                                        content: Text(
+                                          'Failed to process transaction: $e',
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
@@ -430,19 +550,33 @@ class _TransactionPageState extends State<TransactionPage> {
                                     _isProcessing = true;
                                   });
 
-                                  final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                                  final authProvider =
+                                      Provider.of<AuthProvider>(
+                                        context,
+                                        listen: false,
+                                      );
                                   final currentUser = authProvider.currentUser;
-                                  final staffUsername = currentUser?['username'];
-                                  if (currentUser == null || staffUsername == null || staffUsername.isEmpty) {
-                                    setState(() { _isProcessing = false; });
+                                  final staffUsername =
+                                      currentUser?['username'];
+                                  if (currentUser == null ||
+                                      staffUsername == null ||
+                                      staffUsername.isEmpty) {
+                                    setState(() {
+                                      _isProcessing = false;
+                                    });
                                     showDialog(
                                       context: context,
                                       builder: (context) => AlertDialog(
-                                        title: const Text('Authentication Error'),
-                                        content: const Text('You must be logged in as a staff member to process transactions.'),
+                                        title: const Text(
+                                          'Authentication Error',
+                                        ),
+                                        content: const Text(
+                                          'You must be logged in as a staff member to process transactions.',
+                                        ),
                                         actions: [
                                           TextButton(
-                                            onPressed: () => Navigator.of(context).pop(),
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
                                             child: const Text('OK'),
                                           ),
                                         ],
@@ -528,10 +662,13 @@ class _TransactionPageState extends State<TransactionPage> {
                                       context: context,
                                       builder: (context) => AlertDialog(
                                         title: const Text('Error'),
-                                        content: Text('Failed to process transaction: $e'),
+                                        content: Text(
+                                          'Failed to process transaction: $e',
+                                        ),
                                         actions: [
                                           TextButton(
-                                            onPressed: () => Navigator.of(context).pop(),
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
                                             child: const Text('OK'),
                                           ),
                                         ],

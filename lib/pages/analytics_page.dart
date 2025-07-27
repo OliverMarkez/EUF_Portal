@@ -154,21 +154,23 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           if (!isMobile) const AppSidebar(),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(20.0), // Reduced padding
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Page header only for desktop/tablet
                   if (!isMobile) ...[
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 24.0),
+                      padding: const EdgeInsets.only(
+                        bottom: 20.0,
+                      ), // Reduced padding
                       child: _PageHeader(title: 'Analytics'),
                     ),
                   ],
                   _buildRealTimeDashboard(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20), // Reduced spacing
                   _buildEnhancedFilters(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20), // Reduced spacing
                   // Responsive chart layout
                   if (isMobile) ...[
                     // Mobile: Stacked layout
@@ -176,20 +178,32 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                     const SizedBox(height: 16),
                     _buildCard(child: _buildInteractivePieChart()),
                   ] else ...[
-                    // Desktop: Side by side
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: _buildCard(
-                            child: _buildInteractiveLineChart(),
-                          ),
-                        ),
-                        const SizedBox(width: 24),
-                        Expanded(
-                          child: _buildCard(child: _buildInteractivePieChart()),
-                        ),
-                      ],
+                    // Desktop: Side by side with proper spacing
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final availableWidth = constraints.maxWidth;
+                        final cardWidth =
+                            (availableWidth - 24) / 2; // 24 = spacing
+
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                child: _buildInteractiveLineChart(),
+                              ),
+                            ),
+                            const SizedBox(width: 24),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _buildCard(
+                                child: _buildInteractivePieChart(),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ],
@@ -203,7 +217,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
 
   Widget _buildCard({required Widget child}) {
     return Container(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.all(20.0), // Reduced padding
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20.0),
@@ -215,7 +229,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   Widget _buildRealTimeDashboard() {
     final isMobile = MediaQuery.of(context).size.width < 800;
     return Container(
-      padding: EdgeInsets.all(isMobile ? 16 : 20),
+      padding: EdgeInsets.all(isMobile ? 16 : 18), // Reduced desktop padding
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
@@ -237,6 +251,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                   ),
                 ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
@@ -325,49 +340,61 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               ],
             ),
           ] else ...[
-            // Desktop: 1x4 row
-            Row(
-              children: [
-                Expanded(
-                  child: _buildLiveMetric(
-                    'Today\'s Visitors',
-                    '$_liveTouristCount',
-                    Icons.people,
-                    Colors.blueAccent,
-                    isMobile: false,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildLiveMetric(
-                    'Current Revenue',
-                    '₱${_liveRevenue.toStringAsFixed(0)}',
-                    Icons.attach_money,
-                    Colors.greenAccent,
-                    isMobile: false,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildLiveMetric(
-                    'Peak Hour',
-                    _peakHour,
-                    Icons.access_time,
-                    Colors.orangeAccent,
-                    isMobile: false,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildLiveMetric(
-                    'In Queue',
-                    '$_currentQueue',
-                    Icons.queue,
-                    Colors.purpleAccent,
-                    isMobile: false,
-                  ),
-                ),
-              ],
+            // Desktop: 1x4 row with flexible spacing
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final availableWidth = constraints.maxWidth;
+                final itemWidth =
+                    (availableWidth - 48) / 4; // 48 = 3 * 16 (spacing)
+
+                return Row(
+                  children: [
+                    SizedBox(
+                      width: itemWidth,
+                      child: _buildLiveMetric(
+                        'Today\'s Visitors',
+                        '$_liveTouristCount',
+                        Icons.people,
+                        Colors.blueAccent,
+                        isMobile: false,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    SizedBox(
+                      width: itemWidth,
+                      child: _buildLiveMetric(
+                        'Current Revenue',
+                        '₱${_liveRevenue.toStringAsFixed(0)}',
+                        Icons.attach_money,
+                        Colors.greenAccent,
+                        isMobile: false,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    SizedBox(
+                      width: itemWidth,
+                      child: _buildLiveMetric(
+                        'Peak Hour',
+                        _peakHour,
+                        Icons.access_time,
+                        Colors.orangeAccent,
+                        isMobile: false,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    SizedBox(
+                      width: itemWidth,
+                      child: _buildLiveMetric(
+                        'In Queue',
+                        '$_currentQueue',
+                        Icons.queue,
+                        Colors.purpleAccent,
+                        isMobile: false,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ],
@@ -403,6 +430,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                     color: Colors.white70,
                     fontSize: isMobile ? 10 : 12,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -415,6 +443,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               fontSize: isMobile ? 18 : 24,
               fontWeight: FontWeight.bold,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -679,7 +708,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   Widget _buildEnhancedFilters() {
     final isMobile = MediaQuery.of(context).size.width < 800;
     return Container(
-      padding: EdgeInsets.all(isMobile ? 16 : 20),
+      padding: EdgeInsets.all(isMobile ? 16 : 18), // Reduced desktop padding
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
@@ -756,40 +785,49 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               });
             }, isMobile: true),
           ] else ...[
-            // Desktop: Side by side
-            Row(
-              children: [
-                Expanded(
-                  child: _buildFilterDropdown(
-                    'Time Period',
-                    _selectedFilter,
-                    _filters,
-                    (value) {
-                      setState(() {
-                        _selectedFilter = value!;
-                        if (value == 'Custom' && _customDateRange == null) {
-                          _selectCustomDateRange();
-                        }
-                      });
-                    },
-                    isMobile: false,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildFilterDropdown(
-                    'Category',
-                    _selectedCategory,
-                    _categories,
-                    (value) {
-                      setState(() {
-                        _selectedCategory = value!;
-                      });
-                    },
-                    isMobile: false,
-                  ),
-                ),
-              ],
+            // Desktop: Side by side with flexible layout
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final availableWidth = constraints.maxWidth;
+                final itemWidth = (availableWidth - 16) / 2; // 16 = spacing
+
+                return Row(
+                  children: [
+                    SizedBox(
+                      width: itemWidth,
+                      child: _buildFilterDropdown(
+                        'Time Period',
+                        _selectedFilter,
+                        _filters,
+                        (value) {
+                          setState(() {
+                            _selectedFilter = value!;
+                            if (value == 'Custom' && _customDateRange == null) {
+                              _selectCustomDateRange();
+                            }
+                          });
+                        },
+                        isMobile: false,
+                      ),
+                    ),
+                    const SizedBox(width: 12), // Reduced spacing
+                    SizedBox(
+                      width: itemWidth,
+                      child: _buildFilterDropdown(
+                        'Category',
+                        _selectedCategory,
+                        _categories,
+                        (value) {
+                          setState(() {
+                            _selectedCategory = value!;
+                          });
+                        },
+                        isMobile: false,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
 
@@ -894,63 +932,78 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 // TODO: Implement annotation filtering
               }, isMobile: true),
             ] else ...[
-              // Desktop: Grid layout
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildFilterDropdown(
-                      'Time of Day',
-                      _selectedTimeOfDay,
-                      _timeOfDayOptions,
-                      (value) {
-                        setState(() {
-                          _selectedTimeOfDay = value!;
-                        });
-                      },
-                      isMobile: false,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildFilterChip(
-                      'Show Trends',
-                      Icons.trending_up,
-                      true,
-                      (value) {
-                        // TODO: Implement trend filtering
-                      },
-                      isMobile: false,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildFilterChip(
-                      'Include Zero Values',
-                      Icons.exposure_zero,
-                      false,
-                      (value) {
-                        // TODO: Implement zero value filtering
-                      },
-                      isMobile: false,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildFilterChip(
-                      'Show Annotations',
-                      Icons.note,
-                      true,
-                      (value) {
-                        // TODO: Implement annotation filtering
-                      },
-                      isMobile: false,
-                    ),
-                  ),
-                ],
+              // Desktop: Grid layout with flexible spacing
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final availableWidth = constraints.maxWidth;
+                  final itemWidth = (availableWidth - 16) / 2; // 16 = spacing
+
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: itemWidth,
+                            child: _buildFilterDropdown(
+                              'Time of Day',
+                              _selectedTimeOfDay,
+                              _timeOfDayOptions,
+                              (value) {
+                                setState(() {
+                                  _selectedTimeOfDay = value!;
+                                });
+                              },
+                              isMobile: false,
+                            ),
+                          ),
+                          const SizedBox(width: 12), // Reduced spacing
+                          SizedBox(
+                            width: itemWidth,
+                            child: _buildFilterChip(
+                              'Show Trends',
+                              Icons.trending_up,
+                              true,
+                              (value) {
+                                // TODO: Implement trend filtering
+                              },
+                              isMobile: false,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: itemWidth,
+                            child: _buildFilterChip(
+                              'Include Zero Values',
+                              Icons.exposure_zero,
+                              false,
+                              (value) {
+                                // TODO: Implement zero value filtering
+                              },
+                              isMobile: false,
+                            ),
+                          ),
+                          const SizedBox(width: 12), // Reduced spacing
+                          SizedBox(
+                            width: itemWidth,
+                            child: _buildFilterChip(
+                              'Show Annotations',
+                              Icons.note,
+                              true,
+                              (value) {
+                                // TODO: Implement annotation filtering
+                              },
+                              isMobile: false,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
               ),
             ],
           ],
@@ -1001,6 +1054,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             fontSize: isMobile ? 11 : 12,
             fontWeight: FontWeight.w500,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
         Container(
@@ -1022,7 +1076,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             items: options.map((String option) {
               return DropdownMenuItem<String>(
                 value: option,
-                child: Text(option),
+                child: Text(option, overflow: TextOverflow.ellipsis),
               );
             }).toList(),
             onChanged: onChanged,
@@ -1049,6 +1103,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             fontSize: isMobile ? 11 : 12,
             fontWeight: FontWeight.w500,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
         GestureDetector(
@@ -1076,12 +1131,15 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                   size: isMobile ? 14 : 16,
                 ),
                 const SizedBox(width: 6),
-                Text(
-                  value ? 'Enabled' : 'Disabled',
-                  style: TextStyle(
-                    color: value ? Colors.blueAccent : Colors.white70,
-                    fontSize: isMobile ? 10 : 12,
-                    fontWeight: FontWeight.w500,
+                Flexible(
+                  child: Text(
+                    value ? 'Enabled' : 'Disabled',
+                    style: TextStyle(
+                      color: value ? Colors.blueAccent : Colors.white70,
+                      fontSize: isMobile ? 10 : 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
